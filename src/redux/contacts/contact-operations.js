@@ -1,17 +1,16 @@
 import { fetchContacts } from 'services/contacts';
 
-import actions, {
-  fetchAllContactsLoading,
-  fetchAllContactsSuccess,
-} from './contact-actions';
+import actions from './contact-actions';
 
 const fetchAllContacts = () => {
   const func = async dispatch => {
     try {
-      dispatch(fetchAllContactsLoading());
+      dispatch(actions.fetchAllContactsLoading());
       const data = await fetchContacts();
-      dispatch(fetchAllContactsSuccess(data));
-    } catch (error) {}
+      dispatch(actions.fetchAllContactsSuccess(data));
+    } catch ({ response }) {
+      dispatch(actions.fetchAllContactsError(response.data.message));
+    }
   };
   return func;
 };
