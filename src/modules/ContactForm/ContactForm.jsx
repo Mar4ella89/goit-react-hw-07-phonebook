@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-// import { addContact } from 'redux/contacts/contact-slice';
 import {
   fetchAllContacts,
   fetchAddContact,
@@ -15,32 +14,13 @@ const ContactForm = () => {
     number: '',
   });
 
-  // const contacts = useSelector(store => store.contacts);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchAllContacts());
   }, [dispatch]);
 
-  // const isDublicate = (name, number) => {
-  //   const normalizedName = name.toLowerCase();
-  //   const normalizedNumber = number.toLowerCase();
-
-  //   const contactData = contacts.find(({ name, number }) => {
-  //     return (
-  //       name.toLowerCase() === normalizedName ||
-  //       number.toLowerCase() === normalizedNumber
-  //     );
-  //   });
-
-  //   return Boolean(contactData);
-  // };
-
   const handleAddContact = ({ name, number }) => {
-    // if (isDublicate(name, number)) {
-    //   return alert(`Name ${name} or number ${number} is already in contacts`);
-    // }
-
     const action = fetchAddContact({ name, number });
     dispatch(action);
   };

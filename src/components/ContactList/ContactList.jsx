@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { fetchDeleteContacts } from 'redux/contacts/contact-operations';
-// import { deleteContact } from 'redux/contacts/contact-slice';
+
 import Notification from 'components/Notification/Notification';
 import css from './ContactList.module.css';
 
