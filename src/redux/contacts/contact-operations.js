@@ -1,65 +1,57 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
 import { fetchContacts, addContact, deleteContact } from 'services/contacts';
 
-import * as actions from './contact-actions';
-
-export const fetchAllContacts = () => {
-  const func = async dispatch => {
+export const fetchAllContacts = createAsyncThunk(
+  'contacts/fetch-all',
+  async (_, thunkAPI) => {
     try {
-      dispatch(actions.fetchAllContactsLoading());
       const data = await fetchContacts();
-
-      dispatch(actions.fetchAllContactsSuccess(data));
+      return data;
     } catch ({ response }) {
-      dispatch(actions.fetchAllContactsError(response.data.message));
+      return thunkAPI.rejectWithValue(response.data.message);
     }
-  };
-  return func;
-};
+  }
+);
 
-const isDublicate = (contacts, { name, number }) => {
-  const normalizedName = name.toLowerCase();
-  const normalizedNumber = number.toLowerCase();
-
-  const contactData = contacts.find(({ name, number }) => {
-    return (
-      name.toLowerCase() === normalizedName ||
-      number.toLowerCase() === normalizedNumber
-    );
-  });
-
-  return Boolean(contactData);
-};
-
-export const fetchAddContact = data => {
-  const func = async (dispatch, getState) => {
+export const fetchAddContact = createAsyncThunk(
+  'contacts/add',
+  async (data, { rejectWithValue }) => {
     try {
+      const result = await addContact(data);
+      return result;
+    } catch ({ response }) {
+      return rejectWithValue(response.data.message);
+    }
+  },
+  {
+    condition: ({ name, number }, { getState }) => {
       const { contacts } = getState();
+      const normalizedName = name.toLowerCase();
+      const normalizedNumber = number.toLowerCase();
 
-      if (isDublicate(contacts.items, data)) {
-        alert(
-          `Name ${data.name} or number ${data.number} is already in contacts`
+      const contactData = contacts.items.find(({ name, number }) => {
+        return (
+          name.toLowerCase() === normalizedName ||
+          number.toLowerCase() === normalizedNumber
         );
+      });
+      if (contactData) {
+        alert(`Name ${name} or number ${number} is already in contacts`);
         return false;
       }
-      dispatch(actions.fetchAddContactLoading());
-      const result = await addContact(data);
-      dispatch(actions.fetchAddContactSuccess(result));
-    } catch ({ response }) {
-      dispatch(actions.fetchAddContactError(response.data.message));
-    }
-  };
-  return func;
-};
+    },
+  }
+);
 
-export const fetchDeleteContacts = id => {
-  const func = async dispatch => {
+export const fetchDeleteContacts = createAsyncThunk(
+  'contacts/delete',
+  async (id, { rejectWithValue }) => {
     try {
-      dispatch(actions.fetchDeleteContactLoading());
       await deleteContact(id);
-      dispatch(actions.fetchDeleteContactSuccess(id));
+      return id;
     } catch ({ response }) {
-      dispatch(actions.fetchDeleteContactError(response.data.message));
+      return rejectWithValue(response.data.message);
     }
-  };
-  return func;
-};
+  }
+);
