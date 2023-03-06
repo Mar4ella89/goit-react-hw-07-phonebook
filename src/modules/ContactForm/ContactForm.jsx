@@ -1,7 +1,12 @@
-import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { addContact } from 'redux/contacts/contact-slice';
+// import { addContact } from 'redux/contacts/contact-slice';
+import {
+  fetchAllContacts,
+  fetchAddContact,
+} from 'redux/contacts/contact-operations';
+
 import css from './ContactForm.module.css';
 
 const ContactForm = () => {
@@ -10,29 +15,33 @@ const ContactForm = () => {
     number: '',
   });
 
-  const contacts = useSelector(store => store.contacts);
+  // const contacts = useSelector(store => store.contacts);
   const dispatch = useDispatch();
 
-  const isDublicate = (name, number) => {
-    const normalizedName = name.toLowerCase();
-    const normalizedNumber = number.toLowerCase();
+  useEffect(() => {
+    dispatch(fetchAllContacts());
+  }, [dispatch]);
 
-    const contactData = contacts.find(({ name, number }) => {
-      return (
-        name.toLowerCase() === normalizedName ||
-        number.toLowerCase() === normalizedNumber
-      );
-    });
+  // const isDublicate = (name, number) => {
+  //   const normalizedName = name.toLowerCase();
+  //   const normalizedNumber = number.toLowerCase();
 
-    return Boolean(contactData);
-  };
+  //   const contactData = contacts.find(({ name, number }) => {
+  //     return (
+  //       name.toLowerCase() === normalizedName ||
+  //       number.toLowerCase() === normalizedNumber
+  //     );
+  //   });
+
+  //   return Boolean(contactData);
+  // };
 
   const handleAddContact = ({ name, number }) => {
-    if (isDublicate(name, number)) {
-      return alert(`Name ${name} or number ${number} is already in contacts`);
-    }
+    // if (isDublicate(name, number)) {
+    //   return alert(`Name ${name} or number ${number} is already in contacts`);
+    // }
 
-    const action = addContact({ name, number });
+    const action = fetchAddContact({ name, number });
     dispatch(action);
   };
 
